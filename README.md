@@ -87,14 +87,12 @@ It is recommended to initialize the tensor with ones and then assign higher valu
 
 If you use this code for your research, please cite our paper:
 ```
-@misc{vaisman2025turboddcmfastflexiblezeroshot,
-      title={Turbo-DDCM: Fast and Flexible Zero-Shot Diffusion-Based Image Compression},
-      author={Amit Vaisman and Guy Ohayon and Hila Manor and Michael Elad and Tomer Michaeli},
-      year={2025},
-      eprint={2511.06424},
-      archivePrefix={arXiv},
-      primaryClass={eess.IV},
-      url={https://arxiv.org/abs/2511.06424},
+@article{vaisman2025turboddcm,
+    author  = {Amit Vaisman and Guy Ohayon and Hila Manor and Michael Elad and Tomer Michaeli},
+    title   = {{Turbo-DDCM}: Fast and Flexible Zero-Shot Diffusion-Based Image Compression},
+    journal = {arXiv preprint:2511.06424},
+    url     = {https://arxiv.org/abs/2511.06424},
+    year    = {2025},
 }
 ```
 
