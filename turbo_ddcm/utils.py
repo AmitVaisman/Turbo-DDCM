@@ -3,12 +3,10 @@ import torch
 import torch.nn.functional as F
 import numpy as np
 import random
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image
 import torchvision.transforms as transforms
 import math
 import matplotlib.pyplot as plt
-# from torchmetrics.image import PeakSignalNoiseRatio
-from torchvision.transforms.functional import to_tensor
 
 BIN_SUFFIX = '.turbo_ddcm'
 
@@ -40,13 +38,26 @@ def set_seed(seed: int) -> None:
     torch.cuda.manual_seed_all(seed)
 
 
-def load_image(image_path, device=None):
+def load_image(image_path, resize_to, device=None):
     class MinusOneToOne(torch.nn.Module):
         def forward(self, tensor: torch.Tensor) -> torch.Tensor:
             return tensor * 2 - 1
-        
+
+    class ResizePIL(torch.nn.Module):
+        def __init__(self, image_size):
+            super().__init__()
+            if isinstance(image_size, int):
+                image_size = (image_size, image_size)
+            self.image_size = image_size
+
+        def forward(self, pil_image: Image.Image) -> Image.Image:
+            if self.image_size is not None and pil_image.size != self.image_size:
+                pil_image = pil_image.resize(self.image_size)
+            return pil_image
+
+
     image = Image.open(image_path).convert('RGB')
-    transforms_ = transforms.Compose([transforms.ToTensor(), MinusOneToOne()])
+    transforms_ = transforms.Compose([ResizePIL(resize_to), transforms.ToTensor(), MinusOneToOne()])
     image = transforms_(image)
 
     return image.unsqueeze(0).to(device)
@@ -72,52 +83,3 @@ def turbo_ddcm_bpp(T, K, M, C, NBS, img_height, img_width):
 def save_decoded_img(filename, w_dec):
     os.makedirs(os.path.dirname(filename), exist_ok=True)
     plt.imsave(filename, clear_color(w_dec))
-
-# def compute_psnr(gt_img_path, rec_img_path, device, num_patches=1, save_annotated_path=None):
-#     PSNR = PeakSignalNoiseRatio(data_range=1.0).to(device)
-#
-#     gt_img = to_tensor(Image.open(gt_img_path).convert('RGB')).to(device).unsqueeze(0)
-#     rec_img = to_tensor(Image.open(rec_img_path).convert('RGB')).to(device).unsqueeze(0)
-#
-#     _, _, H, W = gt_img.shape
-#     patch_H = H // num_patches
-#     patch_W = W // num_patches
-#
-#     psnr_values = []
-#
-#     # Convert one of the images to PIL for annotation
-#     annotated_img = Image.open(gt_img_path).convert("RGB")
-#     draw = ImageDraw.Draw(annotated_img)
-#
-#     # Try loading a font (fallback to default if unavailable)
-#     try:
-#         font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", size=patch_H // 5)
-#     except IOError:
-#         font = ImageFont.load_default()
-#
-#     for i in range(num_patches):
-#         for j in range(num_patches):
-#             h_start = i * patch_H
-#             h_end = h_start + patch_H
-#             w_start = j * patch_W
-#             w_end = w_start + patch_W
-#
-#             gt_patch = gt_img[:, :, h_start:h_end, w_start:w_end]
-#             rec_patch = rec_img[:, :, h_start:h_end, w_start:w_end]
-#
-#             psnr = PSNR(gt_patch, rec_patch).item()
-#             psnr_values.append(round(psnr, 2))
-#
-#             if save_annotated_path:
-#                 # Draw rectangle and PSNR text
-#                 draw.rectangle([(w_start, h_start), (w_end, h_end)], outline="red", width=2)
-#                 text = f"{psnr:.1f}"
-#                 draw.text((w_start + 5, h_start + 5), text, fill="red", font=font)
-#
-#     if save_annotated_path:
-#         annotated_img.save(save_annotated_path)
-#         print(f"Saved annotated image to {save_annotated_path}")
-#
-#     all_img_psnr = round(PSNR(gt_img, rec_img).item(), 2)
-#
-#     return psnr_values, all_img_psnr

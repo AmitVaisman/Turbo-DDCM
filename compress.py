@@ -17,18 +17,24 @@ def main(args):
         raise FileNotFoundError(f"No files with suffix {args.img_suffix} found in {args.input_dir}.")
     
     # open one img to check for the size to determine the needed diffusion model
-    test_img = utils.load_image(os.path.join(args.input_dir, target_files[0]), device_str)
-    if test_img.shape == torch.Size([1, 3, 512, 512]):
-        model_id = "stabilityai/stable-diffusion-2-1-base"
-    elif test_img.shape == torch.Size([1, 3, 768, 768]):
+    test_img = utils.load_image(os.path.join(args.input_dir, target_files[0]), None, device_str)
+    if max(test_img.shape[2], test_img.shape[3]) < 512:
+        # too small images
+        raise ValueError(f"Too small images. Minimum size is 512x512.")
+    elif min(test_img.shape[2], test_img.shape[3]) >= 768:
+        resize_to = (768, 768)
         model_id = "stabilityai/stable-diffusion-2-1"
     else:
-        raise ValueError(f"Invalid input shape: {test_img.shape}. Expected [1, 3, 512, 512] or [1, 3, 768, 768].")
+        resize_to = (512, 512)
+        model_id = "stabilityai/stable-diffusion-2-1-base"
+
+    if test_img.shape[2:3] != torch.Size(resize_to):
+        print(f"images will be resized to {resize_to}")
 
     turbo_ddcm = TurboDDCM(model_id, args.T, args.K, args.M, args.seed, args.float32, device_str)
     runtimes = []
     for file_name in tqdm(target_files):
-        img = utils.load_image(os.path.join(args.input_dir, file_name), device_str)
+        img = utils.load_image(os.path.join(args.input_dir, file_name), resize_to, device_str)
         weight_pixel_vector = None
         if args.weights_dir is not None:
             weight_pixel_vector = torch.load(os.path.join(args.weights_dir, os.path.splitext(file_name)[0] + '.pt'), device_str)

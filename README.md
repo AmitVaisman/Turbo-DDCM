@@ -7,15 +7,12 @@
 # Turbo-DDCM: Fast and Flexible Zero-shot Diffusion-based Image Compression
 <!-- omit in toc -->
 
-<p>
-  Amit Vaisman<sup>1</sup>, Guy Ohayon<sup>2</sup>, Hila Manor<sup>1</sup>,
-  Tomer Michaeli<sup>1</sup>, Michael Elad<sup>1</sup> <br/>
+[Amit Vaisman](https://www.linkedin.com/in/amit-vaisman-1b658b167/)<sup>1</sup>, [Guy Ohayon](http://guyohayon.com/)<sup>2</sup>, [Hila Manor](https://hilamanor.github.io/)<sup>1</sup>, [Michael Elad](https://elad.cs.technion.ac.il/)<sup>1</sup>, [Tomer Michaeli](https://tomer.net.technion.ac.il/)<sup>1</sup>
 
-  <sup>1</sup> Technion – Israel Institute of Technology     <sup>2</sup> Flatiron Institute, Simons Foundation
-</p>
+<sup>1</sup> Technion – Israel Institute of Technology     <sup>2</sup> Flatiron Institute, Simons Foundation
 
 <!-- omit in toc -->
-### [Project page]() | [Paper]() | [Demo (coming soon)]()
+### [Project page](https://amitvaisman.github.io/turbo_ddcm/) | [Arxiv](https://arxiv.org/abs/2511.06424) | [Demo (coming soon)]()
 
 <!-- omit in toc -->
 ![Turbo-DDCM Results Overview](assets/teaser.png)
@@ -31,7 +28,7 @@ python -m pip install -r requirements.txt
 ```
 ## Change Log
 
-- **--**: Initial release.
+- **11.11.2025**: Initial release.
 
 ## Usage Example
 
@@ -89,6 +86,17 @@ It is recommended to initialize the tensor with ones and then assign higher valu
 ## Citation
 
 If you use this code for your research, please cite our paper:
+```
+@misc{vaisman2025turboddcmfastflexiblezeroshot,
+      title={Turbo-DDCM: Fast and Flexible Zero-Shot Diffusion-Based Image Compression},
+      author={Amit Vaisman and Guy Ohayon and Hila Manor and Michael Elad and Tomer Michaeli},
+      year={2025},
+      eprint={2511.06424},
+      archivePrefix={arXiv},
+      primaryClass={eess.IV},
+      url={https://arxiv.org/abs/2511.06424},
+}
+```
 
 ## Acknowledgements
 This project is released under the [MIT license]()

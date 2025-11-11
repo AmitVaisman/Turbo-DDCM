@@ -55,7 +55,7 @@ if __name__ == '__main__':
     # optional
     parser.add_argument('--gpu', type=int, default=0, help='GPU device index to use')
     
-    parser.add_argument('--save_runtimes', action='store_true', default=False, help='Save compression times in csv file')
+    parser.add_argument('--save_runtimes', action='store_true', default=False, help='Save decompression times in csv file')
     
     args = parser.parse_args()
     
