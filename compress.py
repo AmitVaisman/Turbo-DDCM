@@ -23,7 +23,7 @@ def main(args):
         raise ValueError(f"Too small images. Minimum size is 512x512.")
     elif 512 <= min(test_img.shape[2], test_img.shape[3]) < 768:
         resize_to = (512, 512)
-        model_id = "Manojb/stable-diffusion-2-1-base" # or "stabilityai/stable-diffusion-2-1-base"
+        model_id = "stabilityai/stable-diffusion-2-1-base" # or "Manojb/stable-diffusion-2-1-base"
     elif 768 < min(test_img.shape[2], test_img.shape[3]) < 1024:
         resize_to = (768, 768)
         model_id = "stabilityai/stable-diffusion-2-1"

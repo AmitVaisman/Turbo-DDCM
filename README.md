@@ -4,7 +4,7 @@
 [![torchvision](https://img.shields.io/badge/torchvision-0.21+-green?logo=pytorch&logoColor=white)](https://pytorch.org/)
 [![diffusers](https://img.shields.io/badge/diffusers-0.32.0-green)](https://github.com/huggingface/diffusers/)
 
-# Turbo-DDCM: Fast and Flexible Zero-shot Diffusion-based Image Compression
+# Turbo-DDCM: Fast and Flexible Zero-shot Diffusion-based Image Compression [ICLR 2026]
 <!-- omit in toc -->
 
 [Amit Vaisman](https://www.linkedin.com/in/amit-vaisman-1b658b167/)<sup>1</sup>, [Guy Ohayon](http://guyohayon.com/)<sup>2</sup>, [Hila Manor](https://hilamanor.github.io/)<sup>1</sup>, [Michael Elad](https://elad.cs.technion.ac.il/)<sup>1</sup>, [Tomer Michaeli](https://tomer.net.technion.ac.il/)<sup>1</sup>
@@ -12,10 +12,10 @@
 <sup>1</sup> Technion – Israel Institute of Technology     <sup>2</sup> Flatiron Institute, Simons Foundation
 
 <!-- omit in toc -->
-### [Project page](https://amitvaisman.github.io/turbo_ddcm/) | [Arxiv](https://arxiv.org/abs/2511.06424) | [Demo (coming soon)]()
+### [Project page](https://amitvaisman.github.io/turbo_ddcm/) | [Arxiv](https://arxiv.org/abs/2511.06424)
 
 <!-- omit in toc -->
-![Turbo-DDCM Results Overview](assets/teaser.png)
+![Turbo-DDCM Results Overview](assets/teaser.jpg)
 
 ## Requirements
 
@@ -28,7 +28,7 @@ python -m pip install -r requirements.txt
 ```
 ## Change Log
 
-- **13.04.2025**: Flux support.
+- **13.04.2026**: Scheduler optimization (improves reconstruction quality), Flux support, accepted to ICLR 2026 !
 - **11.11.2025**: Initial release.
 
 ## Usage Example
