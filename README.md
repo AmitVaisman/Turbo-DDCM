@@ -28,11 +28,12 @@ python -m pip install -r requirements.txt
 ```
 ## Change Log
 
+- **13.04.2025**: Flux support.
 - **11.11.2025**: Initial release.
 
 ## Usage Example
 
-Our code supports compressing images of size $512^{2}$ (using Stable-Diffusion 2.1-Base) and $768^{2}$ (using Stable-Diffusion 2.1).
+Our code supports compressing images with resolutions ranging from $512^{2}$ to $1024^{2}$.
 Run compression / decompression / roundtrip (compression-decompression):
 
 ```bash
@@ -44,6 +45,7 @@ See the `--help` flag for the complete options and details.
 - `--input_dir`: directory containing images to compress.
 - `--output_dir`: directory to save the results.
 - `--M`: atoms to be chosen from the codebook in each diffusion step ($M$ in our paper).
+* Note: The default value of K (16,384) is optimal for $512^{2}$ images. For higher-resolution images, consider increasing K.
 
 The compression script saves binary files and a config JSON (which is parsed during decompression), and it can optionally save reconstructions and compression runtimes.
 

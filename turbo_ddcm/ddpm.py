@@ -4,16 +4,17 @@ from diffusers import StableDiffusionPipeline, DDIMScheduler
 import turbo_ddcm.utils as utils
 
 class DDPM:
-    def __init__(self, model_id, torch_dtype, T, device='cuda', seed=42):
+    def __init__(self, model_id, torch_dtype, T, device='cuda'):
         self.device = device
-        self.seed = seed
         self.model = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=torch_dtype).to(device=device)
-        self.model.scheduler = DDIMScheduler.from_pretrained(model_id, subfolder='scheduler', timestep_spacing='linspace', device=device, torch_dtype=torch_dtype)
+        self.model.scheduler = DDIMScheduler.from_pretrained(model_id, subfolder='scheduler', device=device,
+                                                             torch_dtype=torch_dtype)
         self.scheduler_initialized = False
         self.model.scheduler.set_timesteps(T)
+        self.model.scheduler.timesteps = torch.tensor(utils.evenly_spaced(utils.SCHEDULER, T),
+                                                      device=self.device)
 
     def encode_image(self, img):
-        utils.set_seed(self.seed)
         with torch.no_grad():
             w0 = (self.model.vae.encode(img).latent_dist.mode() * self.model.vae.config.scaling_factor)
         return w0
@@ -52,9 +53,7 @@ class DDPM:
         return pred_original_sample
 
     def get_variance(self, timestep):
-        prev_timestep = (
-                timestep - self.model.scheduler.config.num_train_timesteps //
-                self.model.scheduler.num_inference_steps)
+        prev_timestep = self.get_prev_timestep(timestep)
         alpha_prod_t = self.model.scheduler.alphas_cumprod[timestep]
         alpha_prod_t_prev = self.model.scheduler.alphas_cumprod[
             prev_timestep] if prev_timestep >= 0 else self.model.scheduler.final_alpha_cumprod
@@ -63,14 +62,20 @@ class DDPM:
         variance = (beta_prod_t_prev / beta_prod_t) * (1 - alpha_prod_t / alpha_prod_t_prev)
         return variance
 
+    def get_prev_timestep(self, timestep):
+        timesteps: torch.Tensor = self.model.scheduler.timesteps
+        idx = torch.where(timesteps == timestep)[0].item()
+        if idx + 1 == timesteps.numel():
+            return torch.tensor(0, device=self.device)
+        return timesteps[idx + 1]
+
     def reverse_step(self, model_output, timestep, sample, eta, variance_noise=None, pred_original_sample=None):
         # 1. get previous step value (=t-1)
-        prev_timestep = (
-                timestep - self.model.scheduler.config.num_train_timesteps //
-                self.model.scheduler.num_inference_steps)
+        prev_timestep = self.get_prev_timestep(timestep)
         # 2. compute alphas, betas
         alpha_prod_t = self.model.scheduler.alphas_cumprod[timestep]
-        alpha_prod_t_prev = self.model.scheduler.alphas_cumprod[prev_timestep] if prev_timestep >= 0 else self.model.scheduler.final_alpha_cumprod
+        alpha_prod_t_prev = self.model.scheduler.alphas_cumprod[
+            prev_timestep] if prev_timestep >= 0 else self.model.scheduler.final_alpha_cumprod
 
         if pred_original_sample is None:
             beta_prod_t = 1 - alpha_prod_t
@@ -104,3 +109,9 @@ class DDPM:
             prev_sample = prev_sample + sigma_z
 
         return prev_sample
+
+    @staticmethod
+    def prepare_ref_latents(x_t):
+        # needed in Flux
+        return x_t
+

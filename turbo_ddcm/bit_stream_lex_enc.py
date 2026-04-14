@@ -103,6 +103,7 @@ class BitStreamEncoder:
 
     @staticmethod
     def precompute_comb_table(K: int, M: int, C, to_base_path='.'):
+        print(f"creating combinations file for M={M}. It is generated once and reused for all subsequent runs.")
         full_path = BitStreamEncoder.get_pkl_full_path(K, M, to_base_path)
         table = [[0 for i in range(M)] for x in range(K)]
     

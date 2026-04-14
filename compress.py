@@ -21,12 +21,17 @@ def main(args):
     if max(test_img.shape[2], test_img.shape[3]) < 512:
         # too small images
         raise ValueError(f"Too small images. Minimum size is 512x512.")
-    elif min(test_img.shape[2], test_img.shape[3]) >= 768:
+    elif 512 <= min(test_img.shape[2], test_img.shape[3]) < 768:
+        resize_to = (512, 512)
+        model_id = "Manojb/stable-diffusion-2-1-base" # or "stabilityai/stable-diffusion-2-1-base"
+    elif 768 < min(test_img.shape[2], test_img.shape[3]) < 1024:
         resize_to = (768, 768)
         model_id = "stabilityai/stable-diffusion-2-1"
+    elif min(test_img.shape[2], test_img.shape[3]) >= 1024:
+        resize_to = (1024, 1024)
+        model_id = "black-forest-labs/FLUX.1-dev"
     else:
-        resize_to = (512, 512)
-        model_id = "stabilityai/stable-diffusion-2-1-base"
+        raise ValueError("unsupported image size")
 
     if test_img.shape[2:3] != torch.Size(resize_to):
         print(f"images will be resized to {resize_to}")
@@ -67,7 +72,7 @@ if __name__ == '__main__':
     parser.add_argument('--float32', action='store_true', help='Use float32 precision for model inference')
     parser.add_argument('--seed', type=int, default=88888888, help='Random seed')
     
-    parser.add_argument('--T', type=int, default=20, help='Compress using T diffusion steps')
+    parser.add_argument('--T', type=int, default=30, help='Compress using T diffusion steps')
     parser.add_argument('--K', type=int, default=16384, help="Codebook size")
 
     parser.add_argument('--weights_dir', type=str, default=None, help='Directory with priority maps')

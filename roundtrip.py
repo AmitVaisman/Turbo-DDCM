@@ -27,7 +27,7 @@ if __name__ == '__main__':
     parser.add_argument('--float32', action='store_true', help='Use float32 precision for model inference')
     parser.add_argument('--seed', type=int, default=88888888, help='Random seed')
     
-    parser.add_argument('--T', type=int, default=20, help='Compress using T diffusion steps')
+    parser.add_argument('--T', type=int, default=30, help='Compress using T diffusion steps')
     parser.add_argument('--K', type=int, default=16384, help="Codebook size")
 
     parser.add_argument('--weights_dir', type=str, default=None, help='Directory with priority maps')
